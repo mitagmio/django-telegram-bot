@@ -76,3 +76,20 @@ def _send_message(
         success = True
         User.objects.filter(user_id=user_id).update(is_blocked_bot=False)
     return success
+
+
+def _del_message(
+    chat_id: Union[str, int],
+    message_id: Optional[int],
+    tg_token: str = TELEGRAM_TOKEN,
+) -> bool:
+    bot = telegram.Bot(tg_token)
+    try:
+        m = bot.delete_message(
+            chat_id=chat_id, message_id=message_id)
+    except telegram.error.Unauthorized:
+        print(f"Can't delete message to {chat_id} and message {message_id}.")
+        success = False
+    finally:
+        success = True
+    return success

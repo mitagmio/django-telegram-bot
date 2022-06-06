@@ -17,10 +17,12 @@ services:
   redis:
     image: redis:alpine
     container_name: dtb_redis
+    restart: always
   web:
     build: .
     container_name: dtb_django
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    restart: always
     volumes:
       - .:/code
       - ./dtb/static:/static
@@ -44,8 +46,7 @@ services:
     restart: always
     tty: true
     ports:
-      - 443:443
-      - 80:80
+      - 3500:80
     volumes:
       #- certs:/etc/nginx/certs
       #- html:/usr/share/nginx/html
@@ -77,6 +78,7 @@ services:
     depends_on:
       - redis
       - web
+    restart: always
   celery-beat:
     build: .
     container_name: dtb_beat
